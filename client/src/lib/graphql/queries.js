@@ -9,6 +9,11 @@ export async function getCompany(id) {
             id
             name
             description
+            jobs {
+                id
+                date
+                title
+            }
         }
     }`;
     const {company} = await client.request(query, {id});
