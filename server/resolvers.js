@@ -27,7 +27,11 @@ export const resolvers = {
             createJob({ companyId, title, description})
         },
 
-        deleteJob: (_root,  { id }) => deleteJob(id)
+        deleteJob: (_root,  { id }) => deleteJob(id),
+
+        updateJob: (_root, { input: { id, title, description }}) => {
+            updateJob({ id, title, description})
+        },
     },
 
     Company: {
