@@ -22,7 +22,10 @@ export const resolvers = {
     },
 
     Mutation: {
-        createJob: (_root, { input: { title, description }}) => {
+        createJob: (_root, { input: { title, description }}, {auth}) => {
+            if(!auth) {
+                throw unauthorizedError('Missing autentication')
+            }
             const companyId = 'xxxxxxx'
             createJob({ companyId, title, description})
         },
@@ -49,6 +52,13 @@ function notFoundError(message) {
         extension: { code: 'NOT_FOUND'},
     })
 }
+
+function unauthorizedError(message) {
+    return new GraphQLError(message, {
+        extension: { code: 'UNAUTHORIZED'},
+    })
+}
+
 function toIsoDate(value) {
     return value.slice(0, 'yyyy-mm-dd'.length);
 }
