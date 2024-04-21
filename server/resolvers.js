@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { createJob, getJob, getJobs, getJobsByCompany, deleteJob } from "./db/jobs.js"
+import { createJob, getJob, getJobs, getJobsByCompany, deleteJob, updateJob } from "./db/jobs.js"
 import { getCompany } from "./db/companies.js"
 
 export const resolvers = {
@@ -14,7 +14,7 @@ export const resolvers = {
         job: async (_root, { id }) => {
             const job = await getJob(id);
             if(!job) {
-                throw notFoundError('No job foud with id ' + id)
+                throw notFoundError('No job foud with id ' + id);
             }
             return job;
         },
@@ -24,16 +24,25 @@ export const resolvers = {
     Mutation: {
         createJob: (_root, { input: { title, description }}, {user}) => {
             if(!user) {
-                throw unauthorizedError('Missing autentication')
+                throw unauthorizedError('Missing autentication');
             }
 
-            createJob({ companyId: user.companyId, title, description})
+            return createJob({ companyId: user.companyId, title, description})
         },
 
-        deleteJob: (_root,  { id }) => deleteJob(id),
+        deleteJob: async (_root,  { id }, { user }) => {
+            if(!user) {
+                throw unauthorizedError('Missing autentication')
+            }
+            const job = await deleteJob(id, user.companyId);
+            if(!job) {
+                throw notFoundError('No job foud with id ' + id);
+            }
+            return job;
+        },
 
         updateJob: (_root, { input: { id, title, description }}) => {
-            updateJob({ id, title, description})
+            return updateJob({ id, title, description})
         },
     },
 
