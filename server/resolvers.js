@@ -41,8 +41,15 @@ export const resolvers = {
             return job;
         },
 
-        updateJob: (_root, { input: { id, title, description }}) => {
-            return updateJob({ id, title, description})
+        updateJob: (_root, { input: { id, title, description }}, { user}) => {
+            if(!user) {
+                throw unauthorizedError('Missing autentication')
+            }
+            const job =  updateJob({ id, companyId: user.companyId, title, description});
+            if(!job) {
+                throw notFoundError('No job foud with id ' + id);
+            }
+            return job;
         },
     },
 
