@@ -1,5 +1,5 @@
 import { ApolloClient, ApolloLink, concat, createHttpLink, gql, InMemoryCache } from "@apollo/client";
-import { GraphQLClient } from "graphql-request";
+// import { GraphQLClient } from "graphql-request";
 import { getAccessToken } from '../auth';
 
 // const client = new GraphQLClient('http://localhost:9000/graphql', {
@@ -28,6 +28,11 @@ const apolloClient = new ApolloClient({
     // uri: 'http://localhost:9000/graphql',
     link: concat(authLink, httpLink),
     cache: new InMemoryCache(),
+    defaultOptions: {
+        query: {
+            fetchPolicy: 'network-only',
+        }
+    }
 })
 
 export async function createJob({title, description}) {
